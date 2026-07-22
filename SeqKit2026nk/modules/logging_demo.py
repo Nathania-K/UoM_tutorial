@@ -2,9 +2,6 @@
 ### CURRENT LOGGING EXAMPLES DEMO ###
 #####################################
 
-# Import logging set up
-from ..logger import logger 
-
 #Settings and meanings
 #DEBUG = every step that has run 
 #INFO = everything working as expected 
@@ -12,14 +9,27 @@ from ..logger import logger
 #ERROR = Something has failed
 #CRITICAL = Something caused programme failiure.
 
-### Example log messages ###
+# Import logging set up
 
-logger.debug("standard debug message") #not logged unless main/stdout logger level set to DEBUG.
+import logging
 
-logger.info("programme steps sucessfully completed") #not logged unless main/stdout logger level set to DEBUG.
+logger = logging.getLogger(__name__)
 
-logger.warning("unexpected finding during running but programme has completed") #prints to file.
+def logging_demo():
 
-logger.error("error during programme execution") #prints to stderr and file.
+    logger.debug("standard debug message") #saves to file
 
-logger.critical("Unexpected critical error causing programme failiure") #prints to stderr and file.
+    logger.info("programme started successfully") #saves to file
+
+    logger.warning("Unexpected finding during running but continuing") #saves to file
+
+    logger.error("Something failed during programme execution") #saves to file
+
+    logger.critical("Serious error, programme may fail") #saves to file
+
+    logger.info("Demo complete, check console and file log") 
+
+    return None
+
+if __name__ == '__main__':
+    logging_demo()

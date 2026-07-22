@@ -1,5 +1,5 @@
 #####################################
-### CONFIGURATION USED IN LOGGING ###
+### DICTCONFIG SETUP FOR  LOGGING ###
 #####################################
 
 #----------------------------------------#
@@ -12,16 +12,51 @@ from pathlib import Path
 # Step 1: Define default log file (in ~) #
 #----------------------------------------#
 
-LOG_DIRECTORY = "~/.SeqKit2026nk/logs"
+LOG_DIR = Path("~/.SeqKit2026nk/logs").expanduser()
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 # Logger Configuration
-#home_dir = Path.home()
-#DEFAULT_LOG = Path(home_dir, ".SeqKit2026nk/logs")
-
-#LOG_FILE = DEFAULT_LOG
+LOG_FILE = LOG_DIR / "app_log.log"
 
 #---------------------------------------------#
-# Step 2: Normalise the path (defensive step) #
+# Step 4: Logging.configuration.              #
 #---------------------------------------------#
+LOG_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    
+    "formatters": {
+        "standard": {
+            "format": ("%(asctime)s - %(levelname)-8s - %(name)s - "
+            "%(filename)s - %(message)s"
+            )
+        }
+    },
 
-#LOG_FILE = Path(LOG_FILE).expanduser().resolve()
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "standard"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+            "filename": LOG_FILE
+        },
+    },
+
+    "loggers": {
+        "SeqKit2026nk": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+    },
+
+    "root": {
+        "level": "DEBUG",
+        "handlers": ["console", "file"],
+    }
+}
