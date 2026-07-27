@@ -36,20 +36,23 @@ LOG_CONFIG = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "level": "INFO",
+            "level": "DEBUG",
             "formatter": "standard"
         },
         "file": {
-            "class": "logging.FileHandler",
-            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
             "formatter": "standard",
+            "maxBytes": 500_000,
+            "backupCount": 5,
+            "encoding": "utf-8",
             "filename": LOG_FILE
         },
     },
 
     "loggers": {
         "SeqKit2026nk": {
-            "level": "INFO",
+            "level": "DEBUG",
             "handlers": ["console", "file"],
             "propagate": False,
         },
