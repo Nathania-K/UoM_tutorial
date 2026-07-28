@@ -6,7 +6,13 @@ from SeqKit2026nk.logger import setup_logging
 #set logger for this module
 logger = logging.getLogger(__name__)
 
+####TO DO: Tutorial 3 - Ensure that the padding formatting is maintained - make code dynamic (i.e allow user to select block_size, etc).###
+
 def main():
+    """
+    Takes user input DNA sequence and converts into GenBank format
+    """
+
     logger.info("Step 1: DNA sequence entry")
     sequence = user_dna_sequence()
 
@@ -34,13 +40,14 @@ def main():
     )
 
 
-#Create definition to ensure correct user entry for downstream GenBank conversion
 def user_dna_sequence():
-    allowed_characters = set("actg")
+    """
+    Cleans user input for downstream GenBank conversion
+    """
+
+    allowed_characters = set("actgn")
     
-    #when input matches allowed characters
     while True:
-        logger.info("Enter a DNA sequence: ")
         
         try: user_sequence = input()
         except (KeyboardInterrupt, EOFError):
@@ -69,8 +76,11 @@ def user_dna_sequence():
         return sequence
 
 
-#Takes cleaned sequence from user_dna_sequence and creates GenBank format (using 3 parameters).
 def user_format_sequence (sequence, block_size=10, block_per_line=6):
+    """
+    Takes cleaned sequence from 'user_dna_sequence()' and creates GenBank format (using 3 parameters).
+    """
+
     if not sequence:
         logger.warning("cannot format empty sequence")
         return ""
@@ -109,9 +119,14 @@ def user_format_sequence (sequence, block_size=10, block_per_line=6):
         len(lines),
     )
 
-    return formatted_sequence
+    return formatted_sequence #Note: GenBank format in lowercase technically correlates to RNA (DNA is always uppercase).
+
 
 def prompt_to_continue(message):
+    """
+    Allows user to continue or exit program
+    """
+    #Creates infinite loop with message until user input results in a True/False return
     while True:
         logger.info("%s", message)
         logger.info("Press Enter to continue or Q to quit")
@@ -120,16 +135,17 @@ def prompt_to_continue(message):
             response = input().strip().lower()
         except (KeyboardInterrupt, EOFError):
             logger.info("Program cancelled by user.")
-            return False
+            return False #returning False calls system exit
 
         if response == "":
-            return True
+            return True #returning True allows program to continue.
 
         if response in {"q", "quit"}:
             logger.info("Program cancelled by user.")
             return False
 
-        logger.warning("Enter Q to quit or press Enter to continue.")
+        #Raised if anything other than "", "q" or "quit" is returned.
+        logger.warning("Invalid input: Enter Q to quit or press Enter to continue.")
 
 if __name__ == "__main__":
     setup_logging()
