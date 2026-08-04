@@ -29,10 +29,12 @@ def prompt_to_continue():
 
 
 
-def request_block_line_integer (name, default):
+def request_integer (name, default):
     """ 
     Requests positive integer for block_size and blocks_per_line.
+
     Pressing 'enter' returns the specified default settings.
+    Entering 'q' or cancelling returns None
     """
 
     while True:

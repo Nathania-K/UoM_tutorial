@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from SeqKit2026nk.logger import setup_logging
 from SeqKit2026nk.utils.util_mods import prompt_to_continue 
-from SeqKit2026nk.utils.util_mods import request_block_line_integer
+from SeqKit2026nk.utils.util_mods import request_integer
 
 #set logger for this module
 logger = logging.getLogger(__name__)
@@ -70,7 +70,6 @@ def main():
     )
 
 
-
 def user_dna_sequence():
     """
     Cleans user input for downstream GenBank conversion
@@ -116,9 +115,10 @@ def request_format_settings(
     """
     Collects user formatting settings and returns tuple with both values or None if cancelled.
     Cancelling will return None.
+    Uses request_block_line_integer() function in util.mod for 
     """
 
-    block_size = request_block_line_integer(
+    block_size = request_integer(
         "block size",
         default_block_size,
     )
@@ -126,13 +126,13 @@ def request_format_settings(
     if block_size is None:
         return None
 
-    blocks_per_line = request_block_line_integer(
+    blocks_per_line = request_integer(
         "blocks per line",
         default_blocks_per_line,
     )
 
     if blocks_per_line is None:
-        return None
+        return None 
 
     return block_size, blocks_per_line
 
