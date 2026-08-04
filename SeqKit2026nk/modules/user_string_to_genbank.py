@@ -4,44 +4,58 @@ from datetime import datetime
 from pathlib import Path
 from SeqKit2026nk.logger import setup_logging
 from SeqKit2026nk.utils.util_mods import prompt_to_continue 
+from SeqKit2026nk.utils.util_mods import request_block_line_integer
 
 #set logger for this module
 logger = logging.getLogger(__name__)
 
-####TO DO: Tutorial 3 - Ensure that the padding formatting is maintained - make code dynamic (i.e allow user to select block_size, etc).###
+
 
 def main():
     """
-    Takes user input DNA sequence and converts into GenBank format
+    Takes user input DNA sequence and converts into GenBank format on default settings.
+    If custom formatting used, sequence is formatted as specified by user.
     """
 
     #Inital start of program prompting user to input DNA sequence into console.
-    logger.info("Step 1: DNA sequence entry")
+    logger.info("Step 1: DNA sequence entry.")
     sequence = user_dna_sequence()
 
     if sequence is None:
-        logger.info("Program cancelled by user")
+        logger.info("Program cancelled by user.")
         return
 
-    logger.info ("DNA sequence accepted")
+    logger.info ("DNA sequence accepted.")
 
     if not prompt_to_continue():
         return
 
-    logger.info("Step 2: Format DNA sequence")
+    #Format DNA sequence into specified/default settings.
+    logger.info("Step 2: Format DNA sequence.")
 
-    formatted_sequence = user_format_sequence(sequence)
+    formatting_settings = request_format_settings()
+
+    if formatting_settings is None:
+        return
+
+    block_size, blocks_per_line = formatting_settings
+
+    formatted_sequence = user_format_sequence(
+        sequence,
+        block_size=block_size,
+        blocks_per_line=blocks_per_line,
+    )
 
     if formatted_sequence is None:
         return
 
-    logger.info("DNA sequence successfully converted to GenBank formatting")
+    logger.info("DNA sequence successfully formatted.")
 
     if not prompt_to_continue():
         return
 
     logger.debug(
-        "Program completed: GenBank format is: \n%s",
+        "Program completed - formatted sequence is now: \n%s",
         formatted_sequence,
     )
 
@@ -54,6 +68,7 @@ def main():
         formatted_sequence,
         filename,
     )
+
 
 
 def user_dna_sequence():
@@ -75,7 +90,7 @@ def user_dna_sequence():
 
         #checks cleaned sequence is empty and warns of invalid input, returns to input sequence if false.
         if not sequence:
-            logger.warning("No sequence entered: Please enter DNA sequence")
+            logger.warning("No sequence entered: Please enter DNA sequence.")
             continue
 
         invalid_characters = set(sequence) - allowed_characters
@@ -85,7 +100,7 @@ def user_dna_sequence():
 
             #presents invalid characters to user if previously entered in sequence and restates valid characters.
             logger.warning("Invalid characters in sequence '%s'", invalid)
-            logger.info("only A, C, T, G, N and X characters permitted")
+            logger.info("only A, C, T, G, N and X characters permitted.")
             continue
 
         logger.info("DNA sequence received")
@@ -93,20 +108,52 @@ def user_dna_sequence():
         return sequence
 
 
-def user_format_sequence (sequence, block_size=10, block_per_line=6):
+
+def request_format_settings(
+    default_block_size=10,
+    default_blocks_per_line=6,
+):
+    """
+    Collects user formatting settings and returns tuple with both values or None if cancelled.
+    Cancelling will return None.
+    """
+
+    block_size = request_block_line_integer(
+        "block size",
+        default_block_size,
+    )
+
+    if block_size is None:
+        return None
+
+    blocks_per_line = request_block_line_integer(
+        "blocks per line",
+        default_blocks_per_line,
+    )
+
+    if blocks_per_line is None:
+        return None
+
+    return block_size, blocks_per_line
+
+
+
+def user_format_sequence (sequence, block_size=10, blocks_per_line=6):
     """
     Takes cleaned sequence from user_dna_sequence and creates GenBank format (using 3 parameters).
+    Custom format settings taken from tuple produced in request_format_settings().
+    Default format settings retained if no block/line integer provided.
     """
 
     #Prevents user entering empty sequence
     if not sequence:
-        logger.warning("cannot format empty sequence")
-        return ""
+        logger.warning("cannot format empty sequence.")
+        return None
 
     #Prevents user entering 0 params if specified when calling function individually.
-    if block_size <= 0 or block_per_line <= 0:
-        logger.error("Invalid formatting values: block_size and blocks_per_line must be greater than 0")
-        return
+    if block_size <= 0 or blocks_per_line <= 0:
+        logger.error("Invalid formatting values: block_size and blocks_per_line must be greater than 0.")
+        return None
 
     logger.debug(
         "formatting sequence of %d bases into blocks of %d.",
@@ -114,17 +161,17 @@ def user_format_sequence (sequence, block_size=10, block_per_line=6):
         block_size,
     )
 
-    bases_per_line = block_size * block_per_line 
+    bases_per_line = block_size * blocks_per_line 
     lines = [] 
 
     #starts loop through every 60 bases
     for start in range(0, len(sequence), bases_per_line): 
-        #ensures line start defined every 60 bases (i.e. 0:60, 60:120, 120:180)
+        #ensures line start defined every specified bases (i.e. default = 0:60, 60:120, 120:180)
         line_sequence = sequence[start:start + bases_per_line]
 
         blocks = []
 
-        #loops through line sequence in 10-base blocks (i.e. full line = 0, 10, 20, 30, 40, 50)
+        #loops through line sequence in specified-base blocks (i.e. default line = 0, 10, 20, 30, 40, 50)
         for index in range(0, len(line_sequence), block_size): 
             block = line_sequence[index:index + block_size] #extracts one block of 10 bases.
             blocks.append(block)
@@ -135,12 +182,13 @@ def user_format_sequence (sequence, block_size=10, block_per_line=6):
     formatted_sequence = "\n".join(lines) #converts list into single string.
 
     logger.info(
-        "formatted %d bases into %d lines",
+        "formatted %d bases into %d lines.",
         len(sequence),
         len(lines),
     )
 
     return formatted_sequence #Note: GenBank format in lowercase technically correlates to RNA (DNA is always uppercase).
+
 
 
 def choose_filename(): 
@@ -164,13 +212,13 @@ def choose_filename():
         try: 
             filename = input().strip()
         except (KeyboardInterrupt, EOFError):
-            logger.info("Filename entry cancelled by user")
+            logger.info("Filename entry cancelled by user.")
             return None
 
         #if 'q' or 'quit' is entered (case insensitive), file save is cancelled.
         if filename.lower() in {"q", "quit"}:
             logger.info(
-                "filename entry cancelled by user"
+                "filename entry cancelled by user."
                 )
             return None
 
@@ -190,6 +238,7 @@ def choose_filename():
             filename += ".txt"
 
         return filename
+
 
 
 def save_formatted_sequence(
@@ -220,6 +269,8 @@ def save_formatted_sequence(
 
     logger.info("Formatted sequence saved to %s", output_file)
     return output_file
+
+
 
 if __name__ == "__main__":
     setup_logging()
