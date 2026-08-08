@@ -31,7 +31,7 @@ def user_dna_sequence():
 
             #presents invalid characters to user if previously entered in sequence and restates valid characters.
             logger.warning("Invalid characters in sequence '%s'", invalid)
-            logger.info("only A, C, T, G, N and X characters permitted.")
+            logger.info("only A, C, T, G, N and X characters permitted. Please enter a valid DNA sequence.")
             continue
 
         logger.info("DNA sequence received")

@@ -5,41 +5,17 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-def prompt_to_continue():
-    """
-    Allows user to continue or exit program
-    """
-    #Creates infinite loop with message until user input results in a True/False return
-    while True:
-        logger.info("Press Enter to continue or Q to quit")
-
-        try:
-            response = input().strip().lower()
-        except (KeyboardInterrupt, EOFError):
-            logger.info("Program cancelled by user.")
-            return False
-
-        if response == "":
-            return True #returning True allows program to continue.
-
-        if response in {"q", "quit"}:
-            logger.info("Program cancelled by user.")
-            return False
-
-        #Raised if anything other than "", "q" or "quit" is returned.
-        logger.warning("Invalid input: Enter Q to quit or press Enter to continue.")
-
-
-def choose_filename(): 
+def choose_filename(prefix="formatted_sequence"):
     """
     Allows user to choose filename for a .txt file.
+    Prefix used when generating the default timestamped filename.
     Pressing enter will generate defaulted filename (current date/time). 
     Returns None if cancelled.
     """
 
     #Sets up timestamp and default filename(+timestamp) if default filename selected.
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    default_filename = f"formatted_sequence_{timestamp}.txt"
+    default_filename = f"{prefix}_{timestamp}.txt"
 
     while True:
         logger.info(
@@ -48,7 +24,7 @@ def choose_filename():
             default_filename,
         )
 
-        try: 
+        try:
             filename = input().strip()
         except (KeyboardInterrupt, EOFError):
             logger.info("Filename entry cancelled by user.")
@@ -73,10 +49,35 @@ def choose_filename():
             continue
 
         #Adds '.txt' to filename end if not added previously.
-        if Path(filename).suffix == "":
+        if Path(filename).suffix.lower() != ".txt":
             filename += ".txt"
 
         return filename
+
+
+def prompt_to_continue():
+    """
+    Allows user to continue or exit program
+    """
+    #Creates infinite loop with message until user input results in a True/False return
+    while True:
+        logger.info("Press Enter to continue or Q to quit")
+
+        try:
+            response = input().strip().lower()
+        except (KeyboardInterrupt, EOFError):
+            logger.info("Program cancelled by user.")
+            return False
+
+        if response == "":
+            return True #returning True allows program to continue.
+
+        if response in {"q", "quit"}:
+            logger.info("Program cancelled by user.")
+            return False
+
+        #Raised if anything other than "", "q" or "quit" is returned.
+        logger.warning("Invalid input: Enter Q to quit or press Enter to continue.")
 
 
 def request_integer (name, default):
@@ -121,3 +122,30 @@ def request_integer (name, default):
             continue
 
         return value
+
+
+def request_yes_no(message="would you like to continue?"):
+    """
+    Requests a 'Yes/No' response from user.
+    Returns True for 'Yes' and False for 'No'.
+    """
+
+    while True:
+        logger.info("%s Enter Y or N", message)
+
+        try:
+            response = input().strip().lower()
+        except (KeyboardInterrupt, EOFError):
+            logger.info("Program cancelled by user.")
+            return False
+
+        if response in {"y", "yes"}:
+            logger.debug ("Continuing.")
+            return True 
+
+        if response in {"n", "no"}:
+            logger.debug ("Not continuing - cancelled by user.")
+            return False
+
+        logger.warning("Invalid response - please eneter 'Y' to continue or 'N' to cancel.")
+
