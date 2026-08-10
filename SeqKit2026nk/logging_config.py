@@ -27,8 +27,8 @@ LOG_CONFIG = {
     
     "formatters": {
         "standard": {
-            "format": ("%(asctime)s - %(levelname)-8s - %(name)s - "
-            "%(filename)s - %(message)s"
+            "format": ("%(asctime)s | %(levelname)-8s | %(name)-43s | "
+            "%(filename)-25s | %(message)s"
             )
         }
     },

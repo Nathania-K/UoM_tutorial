@@ -10,7 +10,7 @@ def transcribe_to_rna(formatted_sequence):
     if not formatted_sequence:
         return None
 
-    translation_index = str.maketrans({
+    transcription_index = str.maketrans({
         "a": "u",
         "t": "a",
         "c": "g",
@@ -21,4 +21,4 @@ def transcribe_to_rna(formatted_sequence):
         "G": "c",
     })
 
-    return formatted_sequence.translate(translation_index)
+    return formatted_sequence.translate(transcription_index)

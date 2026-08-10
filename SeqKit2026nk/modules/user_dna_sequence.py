@@ -7,7 +7,7 @@ def user_dna_sequence():
     Cleans user input for downstream GenBank conversion
     """
 
-    allowed_characters = set("actgnx")
+    allowed_characters = set("ACTGNX")
     
     while True:
         
@@ -17,7 +17,7 @@ def user_dna_sequence():
             return None #Feeds back into main() def to cancel program 
 
         #cleans input = remove any inputted whitespace and convert to lowercase (if required).
-        sequence = "".join(user_sequence.split()).lower()
+        sequence = "".join(user_sequence.split()).upper()
 
         #checks cleaned sequence is empty and warns of invalid input, returns to input sequence if false.
         if not sequence:
