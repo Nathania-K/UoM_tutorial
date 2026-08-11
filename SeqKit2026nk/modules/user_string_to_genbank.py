@@ -14,6 +14,7 @@ from SeqKit2026nk.modules.translate_rna import translate_rna
 #set logger for this module
 logger = logging.getLogger(__name__)
 
+#NEED TO DOUBLE CHECK THIS IS TRANSCRIBING/TRANSLAING CORRECTLY!! USE A TEST SEQUENCE
 
 def main():
     """
@@ -32,12 +33,12 @@ def main():
 
     logger.info ("DNA sequence accepted.")
 
-    if not prompt_to_continue():
-        return
-
 
     #STEP 2: Formats DNA sequence into specified/default settings.
     logger.info("Step 2: Format DNA sequence.")
+
+    if not prompt_to_continue():
+        return
 
     formatting_settings = request_format_settings()
 
