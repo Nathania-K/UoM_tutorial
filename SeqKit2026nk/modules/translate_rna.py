@@ -2,8 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+#Tranlsates RNA into Protein sequences 
 def translate_rna(formatted_rna_sequence):
 
+    #Index of the RNA codons and their translated proteins.
     translation_index = {
         "uuu": "F",
         "uuc": "F",
@@ -71,10 +73,12 @@ def translate_rna(formatted_rna_sequence):
         "uag": "*"
     }
 
+    # if empty string, returns none and provides warning.
     if not formatted_rna_sequence:
         logger.warning("Cannot translate empty RNA sequence")
         return None
 
+    #cleans the rna sequence and returns a lower case string with joined whitespaces, only accepting 'aucgnx' and calculates untranslated bases.
     rna_sequence = "".join(
         character
         for character in formatted_rna_sequence.lower()
@@ -83,17 +87,20 @@ def translate_rna(formatted_rna_sequence):
     incomplete_bases = len(rna_sequence) % 3
 
     if incomplete_bases:
+
         logger.warning("ignoring %d incomplete bases(s) at end of RNA sequence",
         incomplete_bases,
         )
 
+    #Creates empty list of amino acid sequences to be added to after the following loop.
     amino_acids = []
 
+    #Opens loop going through cleaned rna seuqnce, starting at 0, throughout the length of the rna sequence, 3 bases at a time.
     for position in range (0, len(rna_sequence) - incomplete_bases, 3,):
-        codon = rna_sequence[position:position + 3]
-        amino_acid = translation_index.get(codon, "X")
-        amino_acids.append(amino_acid)
-    amino_acid_sequence = "".join(amino_acids)
+        codon = rna_sequence[position:position + 3] #determines what a codon is (every 3 bases).
+        amino_acid = translation_index.get(codon, "X") #converts codon to amino acid. if not found, returns 'X'.
+        amino_acids.append(amino_acid) #adds each translated amino acid to list.
+    amino_acid_sequence = "".join(amino_acids) #joins all translated amino acids into a seuqnece in a string. 
 
     logger.info(
         "Translated %d bases into %d amino acids.",

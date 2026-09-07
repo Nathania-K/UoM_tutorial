@@ -80,7 +80,7 @@ def prompt_to_continue():
         logger.warning("Invalid input: Enter Q to quit or press Enter to continue.")
 
 
-def request_integer (name, default):
+def request_integer(name, default):
     """ 
     Requests positive integer for block_size and blocks_per_line.
 
@@ -88,6 +88,7 @@ def request_integer (name, default):
     Entering 'q' or cancelling returns None
     """
 
+    #Asks user to enter a custum number or Enter to get defaulted settings in request_format_settings() or quit.
     while True:
         logger.info(
             "Enter %s, press Enter for %d, or type 'q' to quit.",
@@ -95,19 +96,21 @@ def request_integer (name, default):
             default,
         )
 
+        #cleans the input of whitespaces and puts input into lowercase.
         try:
             response = input().strip().lower()
-        except (KeyboardInterrupt, EOFError):
+        except (KeyboardInterrupt, EOFError): 
             logger.info("formatting selection cancelled by user.")
             return None
 
         if response in {"q", "quit"}:
             logger.info ("formatting selection cancelled by user.")
-            return None
+            return None 
 
         if response == "":
             return default
 
+        #accepts only integers as a reponse and returns warning anything else provided.
         try:
             value = int(response)
         except ValueError:
@@ -116,7 +119,8 @@ def request_integer (name, default):
                 name,
             )
             continue
-
+        
+        #Ensures that interger entered must be over 0. 
         if value <= 0: 
             logger.warning("%s must be greater than 0.", name)
             continue
@@ -130,8 +134,9 @@ def request_yes_no(message="would you like to continue?"):
     Returns True for 'Yes' and False for 'No'.
     """
 
+    #Opens loop to ask if user would like to continue. Message customisable but will default to above message if not supplied.
     while True:
-        logger.info("%s Enter Y or N", message)
+        logger.info("%s", message)
 
         try:
             response = input().strip().lower()
@@ -144,7 +149,7 @@ def request_yes_no(message="would you like to continue?"):
             return True 
 
         if response in {"n", "no"}:
-            logger.debug ("Not continuing - cancelled by user.")
+            logger.debug ("Request cancelled by user.")
             return False
 
         logger.warning("Invalid response - please eneter 'Y' to continue or 'N' to cancel.")

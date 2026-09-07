@@ -14,7 +14,7 @@ from SeqKit2026nk.modules.translate_rna import translate_rna
 #set logger for this module
 logger = logging.getLogger(__name__)
 
-#NEED TO DOUBLE CHECK THIS IS TRANSCRIBING/TRANSLAING CORRECTLY!! USE A TEST SEQUENCE
+
 
 def main():
     """
@@ -96,6 +96,7 @@ def main():
 
     formatted_rna_sequence = transcribe_to_rna(formatted_sequence)
 
+    #(Defensive check)
     if formatted_rna_sequence is None:
         return output_dna_file
 
@@ -134,7 +135,7 @@ def main():
     logger.info("Amino acid sequence: \n%s", amino_acid_sequence)
         
 
-    #STEP 7: Ask if user wants to save a protein sequence file.
+    #STEP 7: Ask user if they wish to save the protein sequence file.
     logger.info("Would you like to save the protein sequence?")
 
     if not request_yes_no("Press 'Y' to save file or 'N' to skip"):
