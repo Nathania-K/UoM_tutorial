@@ -1,5 +1,5 @@
 **#SeqKit2026nk Project#**
-[![codecov](https://codecov.io/github/Nathania-K/UoM_tutorial/graph/badge.svg?token=88EJKAHK5E)](https://codecov.io/github/Nathania-K/UoM_tutorial)
+[![codecov](https://codecov.io/github/Nathania-K/UoM_tutorial/branch/develop/graph/badge.svg?token=88EJKAHK5E)](https://codecov.io/github/Nathania-K/UoM_tutorial)
 
 (Exercises for software development tutorial (Yr 1)).
 
